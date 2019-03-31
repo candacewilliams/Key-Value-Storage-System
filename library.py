@@ -1,4 +1,3 @@
-drive.web-frontend_20190322.00_p1
 """A set of libraries that are useful to both the proxy and regular servers."""
 
 # This code uses Python 2.7. These imports make the 2.7 code feel a lot closer
