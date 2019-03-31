@@ -28,71 +28,44 @@ COMMAND_BUFFER_SIZE = 256
 
 
 def CreateServerSocket(port):
-"""Creates a socket that listens on a specified port.
-
-  Args:
-    port: int from 0 to 2^16. Low numbered ports have defined purposes. Almost
-        all predefined ports represent insecure protocols that have died out.
-  Returns:
-    An socket that implements TCP/IP.
- """
-
-    #############################################
-    #TODO: Implement CreateServerSocket Function
-    #############################################
+    HOST = 'localhost'
+    PORT = port
+    
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen()
+    
+    return server_socket
 
 def ConnectClientToServer(server_sock):
-    # Wait until a client connects and then get a socket that connects to the
-    # client.
+    return server_sock.accept()
     
-
-    #############################################
-    #TODO: Implement CreateClientSocket Function
-    #############################################
-    
-
-
-
 def CreateClientSocket(server_addr, port):
-"""Creates a socket that connects to a port on a server."""
-
-    #############################################
-    #TODO: Implement CreateClientSocket Function
-    #############################################
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((server_addr, port))
+    return client_socket
     
 def ReadCommand(sock):
-"""Read a single command from a socket. The command must end in newline."""
-
-    #############################################
-    #TODO: Implement ReadCommand Function
-    #############################################
+    command = ''
+    
+    while not command or command[-1] != '\n':
+        command = sock.recv(COMMAND_BUFFER_SIZE)
+        
+    return command.strip()
     
 def ParseCommand(command):
-"""Parses a command and returns the command name, first arg, and remainder.
-
-  All commands are of the form:
-      COMMAND arg1 remaining text is called remainder
-  Spaces separate the sections, but the remainder can contain additional spaces.
-  The returned values are strings if the values are present or `None`. Trailing
-  whitespace is removed.
-
-  Args:
-    command: string command.
-  Returns:
-    command, arg1, remainder. Each of these can be None.
-  """
-  args = command.strip().split(' ')
-  command = None
-  if args:
-    command = args[0]
-  arg1 = None
-  if len(args) > 1:
-    arg1 = args[1]
-  remainder = None
-  if len(args) > 2:
-    remainder = ' '.join(args[2:])
-  return command, arg1, remainder
-
+    args = command.strip().split(' ')
+    command = None
+    if args:
+        command = args[0]
+    arg1 = None
+    if len(args) > 1:
+        arg1 = args[1]
+    remainder = None
+    if len(args) > 2:
+        remainder = ' '.join(args[2:])
+        
+    return command, arg1, remainder
 
 class KeyValueStore(object):
     
