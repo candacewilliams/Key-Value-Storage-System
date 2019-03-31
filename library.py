@@ -32,7 +32,7 @@ def CreateServerSocket(port):
     
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((HOST, PORT))
-    server_socket.listen()
+    server_socket.listen(10)
     
     return server_socket
 
