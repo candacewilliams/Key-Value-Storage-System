@@ -43,20 +43,21 @@ LISTENING_PORT = 7777
 
 
 def PutCommand(name, text, database):
-    try:
-        database.store_value(name, text)
+     try:
+        database.StoreValue(name, text)
         return "%s = %s\n" %(name, text)
-    except:
-        return "Error storing [%s = %s].\n" %(name, text)
+     except:
+        return "Error storing %s = %s.\n" %(name, text)
 
 def GetCommand(name, database):
-    if name in database:
-        return database[name]
-    else:
-        return "Error, input %s not found.\n" %(name)
+    try:
+        if database.GetValue(name) != NONE:
+            return database.GetValue(name)
+    except:
+        return "Error getting value for %s\n" %(name)
     
 def DumpCommand(database):
-    return database.all_keys()
+    return database.Keys()
   
 
 def SendText(sock, text):
@@ -76,24 +77,24 @@ def main():
         client_sock, (address, port) = library.ConnectClientToServer(server_sock)
         print('Received connection from %s:%d' % (address, port))
 
-    # Read a command.
-    command_line = library.ReadCommand(client_sock)
-    command, name, text = library.ParseCommand(command_line)
+        # Read a command.
+        command_line = library.ReadCommand(client_sock)
+        command, name, text = library.ParseCommand(command_line)
 
-    # Execute the command based on the first word in the command line.
-    if command == 'PUT':
-        result = PutCommand(name, text, database)
-    elif command == 'GET':
-        result = GetCommand(name, database)
-    elif command == 'DUMP':
-        result = DumpCommand(database)
-    else:
-        SendText(client_sock, 'Unknown command %s' % command)
+        # Execute the command based on the first word in the command line.
+        if command == 'PUT':
+            result = PutCommand(name, text, database)
+        elif command == 'GET':
+            result = GetCommand(name, database)
+        elif command == 'DUMP':
+            result = DumpCommand(database)
+        else:
+            SendText(client_sock, 'Unknown command %s' % command)
 
-    SendText(client_sock, result)
+        SendText(client_sock, result)
 
-    # We're done with the client, so clean up the socket.
-    
-    client_s.close()
+        # We're done with the client, so clean up the socket.
+        
+        client_sock.close()
     
 main()
